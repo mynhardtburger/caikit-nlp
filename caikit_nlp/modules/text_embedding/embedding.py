@@ -13,7 +13,17 @@
 # limitations under the License.
 
 # Standard
-from typing import TYPE_CHECKING, Callable, List, Optional, TypeVar, Union
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    List,
+    Literal,
+    Optional,
+    Tuple,
+    TypeVar,
+    Union,
+    overload,
+)
 import importlib
 import os
 import time
@@ -244,9 +254,21 @@ class EmbeddingModule(ModuleBase):
             exception=first_exception,
         )
 
+    @overload
+    def _encode_with_retry(
+        self, *args, return_token_count: Literal[True], **kwargs
+    ) -> Tuple[EncodingResult, int]:
+        ...
+
+    @overload
+    def _encode_with_retry(
+        self, *args, return_token_count: Literal[False] = False, **kwargs
+    ) -> EncodingResult:
+        ...
+
     def _encode_with_retry(
         self, *args, **kwargs
-    ) -> Union[List[torch.Tensor], np.ndarray, torch.Tensor]:
+    ) -> Union[Tuple[EncodingResult, int], EncodingResult]:
         """All encode calls should use this for consistent param adding and retry loop"""
 
         # Add the batch_size kwarg if not passed in and given a usable BATCH_SIZE
