@@ -25,7 +25,7 @@ from caikit.interfaces.nlp.data_model import (
 
 # Local
 from caikit_nlp.modules.text_embedding import EmbeddingModule, utils
-from caikit_nlp.modules.text_embedding.embedding import (
+from caikit_nlp.modules.text_embedding.sentence_transformer_truncate import (
     get_sample_start_indexes,
     sum_token_count,
 )
@@ -485,7 +485,7 @@ def test__truncate_input_tokens_raises(truncate_input_tokens, loaded_model):
     too_long = "x " * (model_max - 1)  # This will go over
     over = model_max + 1
     with pytest.raises(ValueError, match=f"({over} > {model_max})"):
-        loaded_model.model.encode(
+        loaded_model.model.encode_with_truncate(
             sentences=[too_long], truncate_input_tokens=truncate_input_tokens
         )
 
